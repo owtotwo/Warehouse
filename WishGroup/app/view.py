@@ -8,9 +8,14 @@ from .forms import RegistrationForm, LoginForm
 def load_user(user_id):
 	return find_user_by_id(user_id)
 
-
+@app.errorhandler(404)
+def not_found(error):
+	print "Error %s: Can\'t not found this page." % (error)
+	return render_template('404.html')
 
 # ----------------------------------------------------------
+
+
 
 @app.route('/')
 @app.route('/index')
@@ -49,32 +54,18 @@ def log_out():
 def register():
 	form = RegistrationForm(request.form)
 
-	print 'This is register...'
-
 	if request.method == 'POST' and form.validate():
-
-		print 'In!'
 
 		if not find_user_by_name(form.username.data):
 			add_user(form.username.data, form.password.data)
 			flash('Thanks for registering')
-			print 'return url_for(log_in).'
 			return redirect(url_for('log_in'))
-
 		else:
-			print 'This username has already been used.'
 			flash('This username has already been used.')
 
-	print 'return register.html'
 	return render_template('register.html', \
 		form = form, current_user = login.current_user)
 
-
-
-@app.errorhandler(404)
-def not_found(error):
-	print "Error %s: Can\'t not found this page." % (error)
-	return render_template('404.html')
 
 
 @app.route('/info')
@@ -82,3 +73,14 @@ def not_found(error):
 def user_info():
 	return render_template('user_info.html', \
 		current_user = login.current_user)
+
+
+@app.route('/join_group')
+@login.login_required
+def join_group():
+	pass
+
+@app.route('/group')
+@login.login_required
+def group():
+	pass

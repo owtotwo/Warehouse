@@ -1,54 +1,76 @@
-from app import app
-from flask import render_template, request, redirect, url_for, abort
+from flask import render_template, request, redirect, url_for, flash
+from flask.ext import login
+from app import app, login_manager
+from .User_class import *
+from .forms import RegistrationForm, LoginForm
 
-# =========================================================
+@login_manager.user_loader
+def load_user(user_id):
+	return find_user_by_id(user_id)
+
+
+
+# ----------------------------------------------------------
 
 @app.route('/')
 @app.route('/index')
 def index():
-	name = 'owtotwo'
-	return render_template('index.html', name = name)
+	return render_template('index.html', current_user = login.current_user)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
-def login():
-	if request.method == 'POST':
-		username = request.form.get('username')
-		password = request.form.get('password')
-		remember_me = request.form.get('remember_me')
-		print 'username is ' + username
-		print 'password is ' + password
-		if remember_me:
-			print 'remember_me on'
-		else:
-			print 'remember_me off'
-		if find_user_by_name(username).password == password:
-			print "Success to Login In!"
+def log_in():
+	form = LoginForm(request.form)
+	if request.method == 'POST' and form.validate():
+		if check_user(form.username.data, form.password.data):
+			login.login_user(find_user_by_name(form.username.data))
+			flash('Success to Login.')
+			print 'Success to Login.'
+			print 'current username is ' + login.current_user.username
 			return redirect(url_for('index'))
+
 		else:
-			return "Password is wrong."
-	try:
-		return render_template('login.html')
-	except TemplateNotFound:
-		abort(404)
+			flash('Fail to Login.')
+
+	return render_template('login.html', \
+		form = form, current_user = login.current_user)
+
+
+
+@app.route('/logout')
+@login.login_required
+def log_out():
+	login.logout_user()
+	return redirect(url_for('index'))
+
 
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
-	if request.method == 'POST':
-		username = request.form.get('username')
-		password_1 = request.form.get('password_1')
-		password_2 = request.form.get('password_2')
-		
-		if find_user_by_name(username):
-			return "This Username has already been used.\n"
+	form = RegistrationForm(request.form)
+	
+	if request.method == 'POST' and form.validate():
+
+		if not find_user_by_name(form.username.data):
+			add_user(form.username.data, form.password.data)
+			flash('Thanks for registering')
+			return redirect(url_for('log_in'))
 		else:
-			add_user(username, password_1)
-			return redirect(url_for('login'))
-	return render_template('register.html')
+			flash('This username has already been used.')
+
+	return render_template('register.html', \
+		form = form, current_user = login.current_user)
+
 
 
 @app.errorhandler(404)
 def not_found(error):
 	print "Error %s: Can\'t not found this page." % (error)
 	return render_template('404.html')
+
+
+@app.route('/info')
+@login.login_required
+def user_info():
+	return render_template('user_info.html', \
+		current_user = login.current_user)
