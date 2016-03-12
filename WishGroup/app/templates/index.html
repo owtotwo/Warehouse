@@ -1,0 +1,9 @@
+{% block content %}
+	<h1> Hello {{ current_user.username }}, Welcome to Wish Group ! </h1>
+	{% if current_user.is_authenticated %}
+	<h2> 	You can do : </h2>
+	<p>			<div><a href="/info">Check my information</div></p>
+	{% else %}
+	<div> You are a Guest, please <a href="/register">Register</a> or <a href="/login">Login</a></div>
+	{% endif %}
+{% endblock %}

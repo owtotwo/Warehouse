@@ -1,0 +1,28 @@
+<!-- register.html -->
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript">
+	function check_pwd() {
+		pwd_1 = document.getElementById("pwd_1");
+		pwd_2 = document.getElementById("pwd_2");
+		if (pwd_1 !== pwd_2) {
+			abort("Two input of Password is different!\n");
+			return false;
+		} else {
+			return true;
+		}
+	}
+</script>
+<h1> Sign Up </h1>
+<form action = "" method = "post" onsubmit = "return check_pwd();" name = "register">
+	<p>
+		Username:  <br/>
+		<input type = "text" name = "username" id = "uname"/><br/>
+		Password:  <br/>
+		<input type = "password" name = "password_1" id = "pwd_1"/><br/>
+		Password again:  <br/>
+		<input type = "password" name = "password_2" id = "pwd_2"/><br/>
+	</p>
+	<p><input type = "submit" value = "Sign Up"></p>
+</form>
+{% endblock%}
