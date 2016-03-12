@@ -1,4 +1,4 @@
-#!/home/at/WishGroup/flask/bin/python
+#!/home/at/test/microblog/flask/bin/python
 
 # -*- coding: utf-8 -*-
 import re

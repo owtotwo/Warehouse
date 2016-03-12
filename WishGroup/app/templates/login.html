@@ -1,0 +1,24 @@
+<!-- login.html -->
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1> Login </h1>
+{% from "_form_macro.html" import render_field %}
+<form method = "post" action = "/login">
+	<dl>
+		{{ render_field(form.username) }}
+		{{ render_field(form.password) }}
+	</dl>
+	<p><input type = "submit" value = "Login"/></p>
+</form>
+<hr>
+<hr>
+<form action = "" method = "post" name = "login">
+	<p>
+		Username:  <input type = "text" name = "username"/><br/>
+		Password:  <input type = "password" name = "password"/><br/>
+	</p>
+	<p><input type = "submit" value = "Login In"></p>
+</form>
+{% endblock %}
